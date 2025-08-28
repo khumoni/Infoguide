@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Connect Bangladesh</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.15.0"
+  }
+}
+</script>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1 class="logo" data-lang-en="Local Connect" data-lang-bn="স্থানীয় সংযোগ">Local Connect</h1>
+      <nav>
+        <span id="welcome-message"></span>
+        <button id="admin-panel-btn" class="btn" style="display: none;" data-lang-en="Admin" data-lang-bn="অ্যাডমিন">
+            <i class="material-icons">admin_panel_settings</i> Admin
+        </button>
+        <div class="header-icons">
+          <button id="notifications-btn" class="icon-btn" aria-label="Notifications">
+            <i class="material-icons">notifications</i>
+            <span id="notification-dot" class="notification-dot" style="display: none;"></span>
+          </button>
+          <div id="notifications-dropdown" class="notifications-dropdown">
+            <!-- Notifications will be injected here -->
+          </div>
+        </div>
+        <div class="lang-toggle">
+          <button id="lang-en" class="active">EN</button>
+          <span>/</span>
+          <button id="lang-bn">BN</button>
+        </div>
+        <button id="login-btn" class="btn primary" data-lang-en="Login / Register" data-lang-bn="লগইন / নিবন্ধন">Login / Register</button>
+        <button id="profile-btn" class="btn profile-btn" style="display: none;" aria-label="Open profile settings">
+            <img id="header-avatar" src="https://ssl.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png" alt="User Avatar">
+        </button>
+      </nav>
+    </div>
+  </header>
+  
+  <div class="main-nav-container">
+      <div class="container">
+          <nav class="main-nav">
+              <button id="view-feed-btn" class="main-nav-btn active">
+                  <i class="material-icons">feed</i>
+                  <span data-lang-en="News Feed" data-lang-bn="নিউজ ফিড">News Feed</span>
+              </button>
+              <button id="view-browse-btn" class="main-nav-btn">
+                  <i class="material-icons">grid_view</i>
+                  <span data-lang-en="Browse Categories" data-lang-bn="ক্যাটাগরি ব্রাউজ">Browse Categories</span>
+              </button>
+          </nav>
+      </div>
+  </div>
+
+  <main class="container">
+    <div id="view-feed" class="view-container active">
+        <section class="post-feed">
+             <div class="feed-header">
+               <h3 data-lang-en="Latest Posts" data-lang-bn="সর্বশেষ পোস্ট">Latest Posts</h3>
+               <div class="search-filter">
+                   <select id="search-filter-select" aria-label="Select search filter type">
+                       <option value="all" data-lang-en="All" data-lang-bn="সব">All</option>
+                       <option value="content" data-lang-en="Content" data-lang-bn="বিষয়বস্তু">Content</option>
+                       <option value="author" data-lang-en="Author" data-lang-bn="লেখক">Author</option>
+                       <option value="date" data-lang-en="Date" data-lang-bn="তারিখ">Date</option>
+                   </select>
+                   <input type="search" id="search-input" placeholder="Search..." aria-label="Search posts">
+                   <button class="btn" id="search-btn" aria-label="Search"><i class="material-icons">search</i></button>
+               </div>
+           </div>
+          <div id="post-grid" class="post-grid">
+            <!-- Post cards will be injected here by JS -->
+          </div>
+        </section>
+    </div>
+    <div id="view-browse" class="view-container">
+        <section class="onboarding-cta" id="onboarding-cta">
+            <i class="material-icons">auto_awesome</i>
+            <h2 data-lang-en="Get Your Personalized Smart Feed!" data-lang-bn="আপনার ব্যক্তিগত স্মার্ট ফিড পান!">Get Your Personalized Smart Feed!</h2>
+            <p data-lang-en="Log in and set your location to receive news and updates tailored specifically for your area." data-lang-bn="লগইন করুন এবং আপনার এলাকা অনুযায়ী বিশেষভাবে তৈরি খবর এবং আপডেট পেতে আপনার অবস্থান সেট করুন।">Log in and set your location to receive news and updates tailored specifically for your area.</p>
+            <button id="cta-login-btn" class="btn primary" data-lang-en="Login to Get Started" data-lang-bn="শুরু করতে লগইন করুন">Login to Get Started</button>
+        </section>
+
+        <section class="location-selector">
+          <h2 data-lang-en="Find Information for Your Area" data-lang-bn="আপনার এলাকার জন্য তথ্য খুঁজুন">Find Information for Your Area</h2>
+          <div id="location-display" class="location-display">
+            <p data-lang-en="Please log in and select your location in your profile." data-lang-bn="অনুগ্রহ করে লগইন করুন এবং আপনার প্রোফাইলে আপনার অবস্থান নির্বাচন করুন।">Please log in and select your location in your profile.</p>
+          </div>
+           <div class="smart-feed-action">
+                <button id="smart-feed-btn" class="btn primary" style="display: none;" disabled>
+                  <i class="material-icons">auto_awesome</i>
+                  <span data-lang-en="Get Smart Feed" data-lang-bn="স্মার্ট ফিড পান">Get Smart Feed</span>
+                </button>
+            </div>
+        </section>
+
+        <section class="category-browser">
+          <h3 data-lang-en="Browse by Category" data-lang-bn="বিভাগ দ্বারা ব্রাউজ করুন">Browse by Category</h3>
+          <div id="category-buttons" class="category-grid">
+            <!-- Category buttons will be injected here by JS -->
+          </div>
+        </section>
+    </div>
+
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+      <div class="spinner"></div>
+      <p data-lang-en="Loading..." data-lang-bn="লোড হচ্ছে..."></p>
+    </div>
+
+  </main>
+  
+  <button id="create-post-fab" class="fab" style="display: none;" aria-label="Create new post" data-lang-en-title="Create Post" data-lang-bn-title="পোস্ট তৈরি করুন">
+      <i class="material-icons">add</i>
+  </button>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2024 Local Connect. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Login Modal -->
+  <div id="login-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button id="close-modal" class="close-btn" aria-label="Close modal">&times;</button>
+      <h2 data-lang-en="Login" data-lang-bn="লগইন করুন">Login</h2>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email" data-lang-en="Email Address" data-lang-bn="ইমেল ঠিকানা">Email Address</label>
+          <input type="email" id="email" value="user@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="password" data-lang-en="Password" data-lang-bn="পাসওয়ার্ড">Password</label>
+          <input type="password" id="password" value="password" required>
+        </div>
+         <div class="form-group-inline">
+          <label for="login-as-admin" data-lang-en="Log in as Admin" data-lang-bn="অ্যাডমিন হিসেবে লগইন করুন">Log in as Admin</label>
+          <label class="switch">
+            <input type="checkbox" id="login-as-admin">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <button type="submit" class="btn primary full-width" data-lang-en="Login" data-lang-bn="লগইন">Login</button>
+      </form>
+    </div>
+  </div>
+  
+    <!-- Category Select Modal -->
+  <div id="category-select-modal" class="modal-overlay">
+      <div class="modal-content">
+          <button id="close-category-select-modal" class="close-btn" aria-label="Close modal">&times;</button>
+          <h2 data-lang-en="Select a Category" data-lang-bn="একটি বিভাগ নির্বাচন করুন">Select a Category</h2>
+          <div id="category-select-grid" class="category-grid">
+              <!-- Category buttons for post creation will be injected here -->
+          </div>
+      </div>
+  </div>
+
+  <!-- Create Post Modal -->
+  <div id="create-post-modal" class="modal-overlay">
+      <div class="modal-content">
+          <button id="close-create-post-modal" class="close-btn" aria-label="Close modal">&times;</button>
+          <h2 id="create-post-modal-title" data-lang-en="Create New Post" data-lang-bn="নতুন পোস্ট তৈরি করুন">Create New Post</h2>
+          <form id="create-post-form">
+              <div id="dynamic-form-content">
+                  <!-- Category-specific form fields will be injected here -->
+              </div>
+              <button type="submit" class="btn primary full-width" data-lang-en="Submit for Review" data-lang-bn="রিভিউয়ের জন্য জমা দিন">Submit for Review</button>
+          </form>
+      </div>
+  </div>
+  
+   <!-- Admin Panel Modal -->
+  <div id="admin-modal" class="modal-overlay">
+    <div class="modal-content modal-lg">
+      <button id="close-admin-modal" class="close-btn" aria-label="Close modal">&times;</button>
+      <h2 data-lang-en="Pending Posts Approval" data-lang-bn="অপেক্ষমান পোস্ট অনুমোদন">Pending Posts Approval</h2>
+      <div id="admin-post-list">
+          <!-- Pending posts will be injected here -->
+      </div>
+    </div>
+  </div>
+
+   <!-- Post Detail Modal -->
+  <div id="post-detail-modal" class="modal-overlay">
+    <div class="modal-content modal-lg">
+        <button id="close-post-detail-modal" class="close-btn" aria-label="Close modal">&times;</button>
+        <div id="post-detail-content">
+            <!-- Post details will be injected here -->
+        </div>
+    </div>
+  </div>
+
+
+  <!-- Profile Side Panel -->
+  <div id="side-panel-overlay" class="side-panel-overlay"></div>
+  <aside id="side-panel" class="side-panel">
+    <div class="side-panel-header">
+      <h2 data-lang-en="My Profile" data-lang-bn="আমার প্রোফাইল">My Profile</h2>
+      <button id="close-side-panel-btn" class="close-btn" aria-label="Close panel">&times;</button>
+    </div>
+    
+    <nav class="side-panel-tabs">
+        <button class="side-panel-tab active" data-tab="my-posts" data-lang-en="My Posts" data-lang-bn="আমার পোস্ট">My Posts</button>
+        <button class="side-panel-tab" data-tab="settings" data-lang-en="Settings" data-lang-bn="সেটিংস">Settings</button>
+        <button class="side-panel-tab" data-tab="activity" data-lang-en="Activity" data-lang-bn="অ্যাক্টিভিটি">Activity</button>
+    </nav>
+
+    <div class="side-panel-content">
+        <div id="tab-content-my-posts" class="tab-content active">
+             <!-- User's posts will be rendered here -->
+        </div>
+
+        <div id="tab-content-settings" class="tab-content">
+          <form id="profile-form">
+            <div class="profile-picture-section">
+              <img id="avatar-preview" src="https://ssl.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png" alt="Avatar Preview">
+              <input type="file" id="avatar-upload" accept="image/*" hidden>
+              <label for="avatar-upload" class="btn" data-lang-en="Change Photo" data-lang-bn="ছবি পরিবর্তন করুন">Change Photo</label>
+            </div>
+
+            <div class="form-group">
+              <label for="profile-name" data-lang-en="Full Name" data-lang-bn="পুরো নাম">Full Name</label>
+              <input type="text" id="profile-name" required>
+            </div>
+
+            <hr>
+            <h3 data-lang-en="Preferences" data-lang-bn="পছন্দসমূহ">Preferences</h3>
+
+            <div class="form-group">
+              <label for="profile-lang" data-lang-en="Language" data-lang-bn="ভাষা">Language</label>
+              <select id="profile-lang" required>
+                <option value="en">English</option>
+                <option value="bn">বাংলা (Bengali)</option>
+              </select>
+            </div>
+
+            <div class="form-group form-group-inline">
+              <label for="dark-mode-toggle" data-lang-en="Dark Mode" data-lang-bn="ডার্ক মোড">Dark Mode</label>
+              <label class="switch">
+                <input type="checkbox" id="dark-mode-toggle">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            
+            <hr>
+            <h3 data-lang-en="Home Location" data-lang-bn="বাড়ির ঠিকানা">Home Location</h3>
+
+            <div class="form-group">
+                <label for="division-select" data-lang-en="Division" data-lang-bn="বিভাগ">Division</label>
+                <select id="division-select" required>
+                    <option value="" data-lang-en="Select Division" data-lang-bn="বিভাগ নির্বাচন করুন">Select Division</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="district-select" data-lang-en="District" data-lang-bn="জেলা">District</label>
+                <select id="district-select" required disabled>
+                    <option value="" data-lang-en="Select District" data-lang-bn="জেলা নির্বাচন করুন">Select District</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="upazila-select" data-lang-en="Upazila" data-lang-bn="উপজেলা">Upazila</label>
+                <select id="upazila-select" required disabled>
+                    <option value="" data-lang-en="Select Upazila" data-lang-bn="উপজেলা নির্বাচন করুন">Select Upazila</option>
+                </select>
+            </div>
+            <button type="submit" class="btn primary full-width" data-lang-en="Save Changes" data-lang-bn="পরিবর্তন সংরক্ষণ করুন">Save Changes</button>
+          </form>
+        </div>
+        
+        <div id="tab-content-activity" class="tab-content">
+            <h3 data-lang-en="Recent Activity" data-lang-bn="সাম্প্রতিক কার্যকলাপ">Recent Activity</h3>
+            <p data-lang-en="Activity history will be shown here." data-lang-bn="কার্যকলাপের ইতিহাস এখানে দেখানো হবে।">Activity history will be shown here.</p>
+        </div>
+        
+        <div class="side-panel-footer">
+             <button id="logout-btn" class="btn full-width" data-lang-en="Logout" data-lang-bn="লগ আউট">Logout</button>
+        </div>
+    </div>
+  </aside>
+
+  <script type="module" src="index.tsx"></script>
+</body>
+</html>
