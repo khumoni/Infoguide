@@ -1,6 +1,12 @@
 // --- MOCK DATA ---
 // In a real app, this data would come from a server/API.
 
+export const emergencyContacts = [
+    { nameEn: "Police", nameBn: "পুলিশ", number: "999", icon: "local_police" },
+    { nameEn: "Ambulance", nameBn: "অ্যাম্বুলেন্স", number: "999", icon: "local_hospital" },
+    { nameEn: "Fire Service", nameBn: "ফায়ার সার্ভিস", number: "999", icon: "fire_truck" },
+];
+
 export const locationData = {
   divisions: [
     {
@@ -20,7 +26,7 @@ export const locationData = {
         { en: "Bandarban", bn: "বান্দরবান", upazilas: [{ en: "Alikadam", bn: "আলীকদম" }, { en: "Bandarban Sadar", bn: "বান্দরবান সদর" }, { en: "Lama", bn: "লামা" }, { en: "Naikhongchhari", bn: "নাইক্ষ্যংছড়ি" }, { en: "Rowangchhari", bn: "রোয়াংছড়ি" }, { en: "Ruma", bn: "রুমা" }, { en: "Thanchi", bn: "থানচি" }] },
         { en: "Brahmanbaria", bn: "ব্রাহ্মণবাড়িয়া", upazilas: [{ en: "Akhaura", bn: "আখাউড়া" }, { en: "Bancharampur", bn: "বাঞ্ছারামপুর" }, { en: "Brahmanbaria Sadar", bn: "ব্রাহ্মণবাড়িয়া সদর" }, { en: "Kasba", bn: "কসবা" }, { en: "Nabinagar", bn: "নবীনগর" }, { en: "Nasirnagar", bn: "নাসিরনগর" }, { en: "Sarail", bn: "সরাইল" }, { en: "Ashuganj", bn: "আশুগঞ্জ" }, { en: "Bijoynagar", bn: "বিজয়নগর" }] },
         { en: "Chandpur", bn: "চাঁদপুর", upazilas: [{ en: "Chandpur Sadar", bn: "চাঁদপুর সদর" }, { en: "Faridganj", bn: "ফরিদগঞ্জ" }, { en: "Haimchar", bn: "হাইমচর" }, { en: "Haziganj", bn: "হাজীগঞ্জ" }, { en: "Kachua", bn: "কচুয়া" }, { en: "Matlab Dakshin", bn: "মতলব দক্ষিণ" }, { en: "Matlab Uttar", bn: "মতলব উত্তর" }, { en: "Shahrasti", bn: "শাহরাস্তি" }] },
-        { en: "Chittagong", bn: "চট্টগ্রাম", upazilas: [{ en: "Anwara", bn: "আনোয়ারা" }, { en: "Banshkhali", bn: "বাঁশখালী" }, { en: "Boalkhali", bn: "বোয়ালখালী" }, { en: "Chandanaish", bn: "চন্দনাইশ" }, { en: "Fatikchhari", bn: "ফটিকছড়ি" }, { en: "Hathazari", bn: "হাটহাজারী" }, { en: "Lohagara", bn: "লোহাগাড়া" }, { en: "Mirsharai", bn: "মীরসরাই" }, { en: "Patiya", bn: "পটিয়া" }, { en: "Rangunia", bn: "রাঙ্গুনিয়া" }, { en: "Raozan", bn: "রাউজান" }, { en: "Sandwip", bn: "সন্দ্বীপ" }, { en: "Satkania", bn: "সাতকানিয়া" }, { en: "Sitakunda", bn: "সীতাকুণ্ড" }, { en: "Karnaphuli", bn: "কর্ণফুলী" }] },
+        { en: "Chittagong", bn: "চট্টগ্রাম", upazilas: [{ en: "Anwara", bn: "আনোয়ারা" }, { en: "Banshkhali", bn: "বাঁশখালী" }, { en: "Boalkhali", bn: "বোয়ালখালী" }, { en: "Chandanaish", bn: "চন্দনাইש" }, { en: "Fatikchhari", bn: "ফটিকছড়ি" }, { en: "Hathazari", bn: "হাটহাজারী" }, { en: "Lohagara", bn: "লোহাগাড়া" }, { en: "Mirsharai", bn: "মীরসরাই" }, { en: "Patiya", bn: "পটিয়া" }, { en: "Rangunia", bn: "রাঙ্গুনিয়া" }, { en: "Raozan", bn: "রাউজান" }, { en: "Sandwip", bn: "সন্দ্বীপ" }, { en: "Satkania", bn: "সাতকানিয়া" }, { en: "Sitakunda", bn: "সীতাকুণ্ড" }, { en: "Karnaphuli", bn: "কর্ণফুলী" }] },
         { en: "Comilla", bn: "কুমিল্লা", upazilas: [{ en: "Barura", bn: "বরুড়া" }, { en: "Brahmanpara", bn: "ব্রাহ্মণপাড়া" }, { en: "Burichang", bn: "বুড়িচং" }, { en: "Chandina", bn: "চান্দিনা" }, { en: "Chauddagram", bn: "চৌদ্দগ্রাম" }, { en: "Daudkandi", bn: "দাউদকান্দি" }, { en: "Debidwar", bn: "দেবিদ্বার" }, { en: "Homna", bn: "হোমনা" }, { en: "Laksam", bn: "লাকসাম" }, { en: "Monohorgonj", bn: "মনোহরগঞ্জ" }, { en: "Meghna", bn: "মেঘনা" }, { en: "Muradnagar", bn: "মুরাদনগর" }, { en: "Nangalkot", bn: "নাঙ্গলকোট" }, { en: "Cumilla Sadar", bn: "কুমিল্লা সদর" }, { en: "Titas", bn: "তিতাস" }, { en: "Cumilla Sadar South", bn: "কুমিল্লা সদর দক্ষিণ" }] },
         { en: "Cox's Bazar", bn: "কক্সবাজার", upazilas: [{ en: "Chakaria", bn: "চকরিয়া" }, { en: "Cox's Bazar Sadar", bn: "কক্সবাজার সদর" }, { en: "Kutubdia", bn: "কুতুবদিয়া" }, { en: "Maheshkhali", bn: "মহেশখালী" }, { en: "Ramu", bn: "রামু" }, { en: "Teknaf", bn: "টেকনাফ" }, { en: "Ukhia", bn: "উখিয়া" }, { en: "Pekua", bn: "পেকুয়া" }] },
         { en: "Feni", bn: "ফেনী", upazilas: [{ en: "Chhagalnaiya", bn: "ছাগলনাইয়া" }, { en: "Daganbhuiyan", bn: "দাগনভূঞা" }, { en: "Feni Sadar", bn: "ফেনী সদর" }, { en: "Parshuram", bn: "পরশুরাম" }, { en: "Sonagazi", bn: "সোনাগাজী" }, { en: "Fulgazi", bn: "ফুলগাজী" }] },
@@ -274,14 +280,12 @@ export const categoryForms: { [key: string]: { name: string; type: string; label
         { name: 'address', type: 'textarea', labelEn: "Address / Chamber", labelBn: "ঠিকানা / চেম্বার", required: true },
         { name: 'hours', type: 'text', labelEn: "Visiting Hours", labelBn: "দেখার সময়", required: false },
         { name: 'contact', type: 'tel', labelEn: "Contact Number", labelBn: "যোগাযোগের নম্বর", required: false },
-        { name: 'image', type: 'url', labelEn: "Image URL (Optional)", labelBn: "ছবির URL (ঐচ্ছিক)", required: false },
     ],
     emergency: [
         { name: 'serviceName', type: 'text', labelEn: "Service Name (e.g., Fire Service)", labelBn: "সেবার নাম (যেমন, ফায়ার সার্ভিস)", required: true },
         { name: 'contact', type: 'tel', labelEn: "Emergency Contact Number", labelBn: "জরুরি যোগাযোগ নম্বর", required: true },
         { name: 'address', type: 'textarea', labelEn: "Address", labelBn: "ঠিকানা", required: false },
         { name: 'hours', type: 'text', labelEn: "Operating Hours", labelBn: "কার্যক্রমের সময়", required: false },
-        { name: 'image', type: 'url', labelEn: "Image URL (Optional)", labelBn: "ছবির URL (ঐচ্ছিক)", required: false },
     ],
     transport: [
         { name: 'routeName', type: 'text', labelEn: "Route Name/Number", labelBn: "রুটের নাম/নম্বর", required: true },
@@ -289,12 +293,10 @@ export const categoryForms: { [key: string]: { name: string; type: string; label
         { name: 'endPoint', type: 'text', labelEn: "Ending Point", labelBn: "শেষ স্থান", required: true },
         { name: 'fare', type: 'text', labelEn: "Fare", labelBn: "ভাড়া", required: false },
         { name: 'schedule', type: 'textarea', labelEn: "Schedule / Timings", labelBn: "সময়সূচী", required: false },
-        { name: 'image', type: 'url', labelEn: "Image URL (Optional)", labelBn: "ছবির URL (ঐচ্ছিক)", required: false },
     ],
     // Default form for other categories
     default: [
         { name: 'title', type: 'text', labelEn: "Title", labelBn: "শিরোনাম", required: true },
         { name: 'description', type: 'textarea', labelEn: "Description", labelBn: "বিবরণ", required: true },
-        { name: 'image', type: 'url', labelEn: "Image URL (Optional)", labelBn: "ছবির URL (ঐচ্ছিক)", required: false },
     ]
 };

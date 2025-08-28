@@ -69,11 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Smart Feed
     ui.smartFeedBtn?.addEventListener('click', app.getSmartFeed);
 
-    // Post Grid Clicks: Summarize, Like, Open Detail
+    // Post Grid Clicks: Summarize, Like, Share, Open Detail
     ui.postGrid?.addEventListener('click', (e) => {
         const target = e.target as HTMLElement;
         const summarizeButton = target.closest('.summarize-btn') as HTMLButtonElement | null;
         const likeButton = target.closest('.like-btn') as HTMLButtonElement | null;
+        const shareButton = target.closest('.share-btn') as HTMLButtonElement | null;
         const postCard = target.closest('.post-card') as HTMLElement | null;
 
         if (summarizeButton && !summarizeButton.disabled) {
@@ -82,6 +83,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (likeButton) {
             e.stopPropagation();
             app.handleLikeClick(likeButton);
+        } else if (shareButton) {
+            e.stopPropagation();
+            app.handleShareClick(shareButton);
         } else if (postCard) {
             const postId = postCard.dataset.postId;
             if (postId) {
@@ -118,6 +122,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === ui.createPostModal) ui.hideCreatePostModal();
     });
     ui.createPostForm?.addEventListener('submit', app.handleCreatePost);
+    ui.dynamicFormContent?.addEventListener('change', (e) => {
+        const target = e.target as HTMLInputElement;
+        if (target.matches('input[type="file"][name="imageFile"]')) {
+            app.handlePostImageChange(target);
+        }
+    });
+
 
     // Admin Panel listeners
     // FIX: Wrapped call in an arrow function to match event listener signature and pass current language.
@@ -156,4 +167,12 @@ document.addEventListener('DOMContentLoaded', () => {
             ui.postDetailModal?.classList.remove('show');
         }
     });
+
+    // AI Chatbot listeners
+    ui.chatFab?.addEventListener('click', ui.showChatModal);
+    ui.closeChatModal?.addEventListener('click', ui.hideChatModal);
+    ui.chatModal?.addEventListener('click', (e) => {
+        if (e.target === ui.chatModal) ui.hideChatModal();
+    });
+    ui.chatForm?.addEventListener('submit', app.handleSendMessage);
 });

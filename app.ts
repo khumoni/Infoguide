@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI, Type, Chat } from "@google/genai";
 import * as data from './data.js';
 import * as ui from './ui.js';
 
@@ -7,6 +7,8 @@ let currentLang: 'en' | 'bn' = 'en';
 let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 let userProfile: data.UserProfile | null = null;
 let newAvatarDataUrl: string | null = null;
+let newPostImageDataUrl: string | null = null;
+let chat: Chat | null = null;
 
 export const getCurrentLang = () => currentLang;
 
@@ -105,6 +107,10 @@ export function setLanguage(lang: 'en' | 'bn') {
     if (ui.searchInput) {
         ui.searchInput.placeholder = lang === 'en' ? 'Search...' : 'অনুসন্ধান...';
     }
+    if (ui.chatInput) {
+        ui.chatInput.placeholder = lang === 'en' ? 'Ask me anything...' : 'আমাকে জিজ্ঞাসা করুন...';
+    }
+    ui.renderEmergencyBar(currentLang);
     ui.renderCategories(ui.categoryButtonsContainer, false, currentLang);
     filterAndRenderPosts();
     if (userProfile) {
@@ -149,10 +155,8 @@ function checkLocationSelection() {
 export function initializeApp() {
     if (isLoggedIn) {
         initializeUserProfile();
-    } else {
-        setLanguage('en');
-        filterAndRenderPosts();
     }
+    setLanguage('en'); // This also calls filterAndRenderPosts and other render functions
     updateLoginState();
 }
 
@@ -205,6 +209,25 @@ export function handleAvatarChange() {
         reader.readAsDataURL(ui.avatarUpload.files[0]);
     }
 }
+
+export function handlePostImageChange(fileInput: HTMLInputElement) {
+    if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            newPostImageDataUrl = e.target?.result as string;
+            const previewContainer = fileInput.closest('.form-group')?.querySelector('.image-upload-preview') as HTMLElement;
+            if (previewContainer) {
+                const previewImg = previewContainer.querySelector('img');
+                if (previewImg) {
+                    previewImg.src = newPostImageDataUrl!;
+                    previewContainer.classList.add('has-image');
+                }
+            }
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+    }
+}
+
 
 export function handleProfileFormSubmit(e: SubmitEvent) {
     e.preventDefault();
@@ -322,9 +345,8 @@ export function handleCreatePost(e: SubmitEvent) {
     let descriptionEn = '', descriptionBn = '';
     const details: { [key: string]: string } = {};
     const isStructured = categoryId in data.categoryForms && categoryId !== 'default';
-    let image = '';
     for (const [key, value] of formData.entries()) {
-        if (value.toString().trim() === '') continue;
+        if (key === 'imageFile' || value.toString().trim() === '') continue;
         if (isStructured) {
             if (key === 'serviceName' || key === 'routeName' || key === 'doctorName') {
                 titleEn = titleBn = value.toString();
@@ -335,14 +357,14 @@ export function handleCreatePost(e: SubmitEvent) {
             if (key === 'title') titleEn = titleBn = value.toString();
             if (key === 'description') descriptionEn = descriptionBn = value.toString();
         }
-        if (key === 'image') image = value.toString();
     }
     const newPost: data.Post = {
-        id: Date.now(), titleEn, titleBn, descriptionEn, descriptionBn, image: image || `https://source.unsplash.com/400x200/?${categoryId}`, category: categoryId, author: userProfile.name, authorId: userProfile.id, publishDate: new Date().toISOString().split('T')[0], views: 0, likes: 0, comments: 0, status: 'pending', details: Object.keys(details).length > 0 ? details : undefined
+        id: Date.now(), titleEn, titleBn, descriptionEn, descriptionBn, image: newPostImageDataUrl || `https://source.unsplash.com/400x200/?${categoryId}`, category: categoryId, author: userProfile.name, authorId: userProfile.id, publishDate: new Date().toISOString().split('T')[0], views: 0, likes: 0, comments: 0, status: 'pending', details: Object.keys(details).length > 0 ? details : undefined
     };
     data.posts.unshift(newPost);
     logActivity(userProfile.id, 'post_created', `You created a new post: "${newPost.titleEn.substring(0, 30)}..."`, `আপনি একটি নতুন পোস্ট তৈরি করেছেন: "${newPost.titleBn.substring(0, 30)}..."`);
     form.reset();
+    newPostImageDataUrl = null;
     ui.createPostModal!.classList.remove('show');
     alert(currentLang === 'en' ? 'Post submitted for review!' : 'আপনার পোস্ট পর্যালোচনার জন্য জমা দেওয়া হয়েছে!');
     if (document.querySelector('.side-panel-tab[data-tab="my-posts"]')?.classList.contains('active')) {
@@ -376,6 +398,32 @@ export function handleLikeClick(buttonEl: HTMLButtonElement) {
     ui.updateLikeButton(buttonEl, !isLiked, post.likes);
 }
 
+export async function handleShareClick(buttonEl: HTMLButtonElement) {
+    const postId = buttonEl.dataset.postId;
+    if (!postId) return;
+    const post = data.posts.find(p => p.id === parseInt(postId, 10));
+    if (!post) return;
+
+    const title = currentLang === 'en' ? post.titleEn : post.titleBn;
+    const shareData = {
+        title: `Local Connect: ${title}`,
+        text: currentLang === 'en' ? post.descriptionEn : post.descriptionBn,
+        url: window.location.href, // In a real app, this would be a direct link to the post
+    };
+    try {
+        if (navigator.share) {
+            await navigator.share(shareData);
+        } else {
+            // Fallback for browsers that don't support Web Share API
+            navigator.clipboard.writeText(shareData.url);
+            alert(currentLang === 'en' ? 'Link copied to clipboard!' : 'লিঙ্ক ক্লিপবোর্ডে কপি করা হয়েছে!');
+        }
+    } catch (err) {
+        console.error("Share failed:", err);
+    }
+}
+
+
 export function switchSidePanelTab(tabName: string) {
     ui.sidePanelTabs.forEach(t => t.classList.remove('active'));
     document.querySelector(`.side-panel-tab[data-tab="${tabName}"]`)?.classList.add('active');
@@ -397,4 +445,51 @@ export function handleNotificationClick() {
     }
     ui.updateNotifications(userProfile, currentLang); // Re-render to remove 'unread' style and update dot
     ui.notificationsDropdown?.classList.toggle('show');
+}
+
+// --- AI CHATBOT FUNCTIONS ---
+function initializeChat() {
+    if (!chat) {
+        const locationInfo = userProfile?.location ? `The user is from ${userProfile.location.upazila}, ${userProfile.location.district}.` : "The user's location is not set.";
+        const systemInstruction = `You are a helpful AI assistant for an app called "Local Connect Bangladesh". Your goal is to help users find local information. ${locationInfo} Be friendly, concise, and helpful. Answer in the user's language of choice, which is currently ${currentLang === 'en' ? 'English' : 'Bengali'}.`;
+        chat = ai.chats.create({
+            model: 'gemini-2.5-flash',
+            config: { systemInstruction },
+        });
+        const welcomeMessage = currentLang === 'en'
+            ? "Hello! How can I help you find local information today?"
+            : "হ্যালো! আমি আপনাকে কিভাবে সাহায্য করতে পারি?";
+        ui.addChatMessage(welcomeMessage, 'bot');
+    }
+}
+
+export async function handleSendMessage(e: SubmitEvent) {
+    e.preventDefault();
+    if (!ui.chatInput || !chat) {
+        initializeChat();
+    }
+    const userInput = ui.chatInput.value.trim();
+    if (!userInput) return;
+    
+    ui.addChatMessage(userInput, 'user');
+    ui.chatInput.value = '';
+    ui.chatSendBtn.disabled = true;
+
+    try {
+        const responseStream = await chat!.sendMessageStream({ message: userInput });
+        const botMessageElement = ui.addChatMessage("...", 'bot', true);
+        let fullResponse = "";
+        for await (const chunk of responseStream) {
+            fullResponse += chunk.text;
+            botMessageElement.textContent = fullResponse;
+            ui.chatWindow.scrollTop = ui.chatWindow.scrollHeight;
+        }
+    } catch (error) {
+        console.error("Chat error:", error);
+        const errorMessage = currentLang === 'en' ? "Sorry, I couldn't get a response. Please try again." : "দুঃখিত, আমি উত্তর আনতে পারিনি। অনুগ্রহ করে আবার চেষ্টা করুন।";
+        ui.addChatMessage(errorMessage, 'bot');
+    } finally {
+        ui.chatSendBtn.disabled = false;
+        ui.chatInput.focus();
+    }
 }

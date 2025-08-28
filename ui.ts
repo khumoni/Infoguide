@@ -63,8 +63,28 @@ export const notificationDot = document.getElementById('notification-dot');
 export const postDetailModal = document.getElementById('post-detail-modal');
 export const closePostDetailModal = document.getElementById('close-post-detail-modal');
 export const postDetailContent = document.getElementById('post-detail-content');
+export const emergencyBar = document.getElementById('emergency-bar');
+export const chatFab = document.getElementById('chat-fab');
+export const chatModal = document.getElementById('chat-modal');
+export const closeChatModal = document.getElementById('close-chat-modal');
+export const chatWindow = document.getElementById('chat-window') as HTMLElement;
+export const chatForm = document.getElementById('chat-form');
+export const chatInput = document.getElementById('chat-input') as HTMLInputElement;
+export const chatSendBtn = document.getElementById('chat-send-btn') as HTMLButtonElement;
 
 // --- UI RENDERING & MANIPULATION ---
+
+export function renderEmergencyBar(currentLang: 'en' | 'bn') {
+    if (!emergencyBar) return;
+    emergencyBar.innerHTML = `<div class="container">
+        ${data.emergencyContacts.map(contact => `
+            <a href="tel:${contact.number}" class="emergency-contact">
+                <i class="material-icons">${contact.icon}</i>
+                <span>${currentLang === 'en' ? contact.nameEn : contact.nameBn}: ${contact.number}</span>
+            </a>
+        `).join('')}
+    </div>`;
+}
 
 export function updateLocationDisplay(userProfile: data.UserProfile | null, currentLang: 'en' | 'bn') {
     if (userProfile?.location && userProfile.location.upazila) {
@@ -135,16 +155,23 @@ export function renderPosts(postsToRender: data.Post[], isAI: boolean, currentLa
                     </div>
                 </div>
                  <div class="post-card-actions">
-                    <button class="icon-btn like-btn" data-post-id="${post.id}" aria-label="Like post">
-                        <i class="material-icons-outlined">favorite_border</i> <span class="like-count">${post.likes}</span>
-                    </button>
-                    <button class="icon-btn" aria-label="View comments">
-                        <i class="material-icons-outlined">chat_bubble_outline</i> <span>${post.comments}</span>
-                    </button>
-                    <button class="btn summarize-btn" data-post-id="${post.id}" aria-label="Summarize post">
-                       <i class="material-icons">compress</i>
-                       <span data-lang-en="Summarize" data-lang-bn="সারাংশ">${currentLang === 'en' ? 'Summarize' : 'সারাংশ'}</span>
-                    </button>
+                    <div class="actions-left">
+                        <button class="icon-btn like-btn" data-post-id="${post.id}" aria-label="Like post">
+                            <i class="material-icons-outlined">favorite_border</i> <span class="like-count">${post.likes}</span>
+                        </button>
+                        <button class="icon-btn" aria-label="View comments">
+                            <i class="material-icons-outlined">chat_bubble_outline</i> <span>${post.comments}</span>
+                        </button>
+                         <button class="icon-btn share-btn" data-post-id="${post.id}" aria-label="Share post">
+                            <i class="material-icons-outlined">share</i>
+                        </button>
+                    </div>
+                    <div class="actions-right">
+                        <button class="btn summarize-btn" data-post-id="${post.id}" aria-label="Summarize post">
+                           <i class="material-icons">compress</i>
+                           <span data-lang-en="Summarize" data-lang-bn="সারাংশ">${currentLang === 'en' ? 'Summarize' : 'সারাংশ'}</span>
+                        </button>
+                    </div>
                  </div>
             </div>
         `;
@@ -227,7 +254,7 @@ export function closeSidePanel() {
 
 export function generatePostForm(categoryId: string, currentLang: 'en' | 'bn') {
     const formFields = data.categoryForms[categoryId] || data.categoryForms.default;
-    return formFields.map(field => {
+    let formHTML = formFields.map(field => {
         const label = currentLang === 'en' ? field.labelEn : field.labelBn;
         const requiredAttr = field.required ? 'required' : '';
         if (field.type === 'textarea') {
@@ -236,7 +263,25 @@ export function generatePostForm(categoryId: string, currentLang: 'en' | 'bn') {
             return `<div class="form-group"><label for="post-${field.name}">${label}</label><input type="${field.type}" id="post-${field.name}" name="${field.name}" ${requiredAttr}></div>`;
         }
     }).join('');
+
+    // Add image upload field
+    const imageLabel = currentLang === 'en' ? 'Upload Image' : 'ছবি আপলোড করুন';
+    formHTML += `
+        <div class="form-group">
+            <label>${imageLabel}</label>
+            <input type="file" name="imageFile" id="imageFile" accept="image/*" style="display: none;">
+            <label for="imageFile" class="image-upload-preview">
+                <div class="placeholder">
+                    <i class="material-icons">add_photo_alternate</i>
+                    <p>${currentLang === 'en' ? 'Click to upload' : 'আপলোড করতে ক্লিক করুন'}</p>
+                </div>
+                <img src="" alt="Image Preview" style="display: block;">
+            </label>
+        </div>
+    `;
+    return formHTML;
 }
+
 
 export function renderMyPosts(userProfile: data.UserProfile, currentLang: 'en' | 'bn') {
     const myPostsContainer = document.getElementById('tab-content-my-posts');
@@ -383,6 +428,23 @@ export function switchView(viewName: 'feed' | 'browse') {
     viewBrowseBtn?.classList.toggle('active', viewName === 'browse');
 }
 
+// CHAT UI FUNCTIONS
+export function addChatMessage(message: string, sender: 'user' | 'bot', streaming = false): HTMLElement {
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('chat-message', `${sender}-message`);
+    messageElement.textContent = message;
+    chatWindow?.appendChild(messageElement);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+    return messageElement;
+}
+
+export const showChatModal = () => {
+    chatModal?.classList.add('show');
+    chatInput?.focus();
+};
+export const hideChatModal = () => chatModal?.classList.remove('show');
+
+// OTHER MODAL FUNCTIONS
 export const showLoginModal = () => loginModal?.classList.add('show');
 export const hideLoginModal = () => loginModal?.classList.remove('show');
 export const showCategorySelectModal = (currentLang: 'en'|'bn' = 'en') => {
@@ -396,7 +458,9 @@ export const showCreatePostModal = (categoryId: string, currentLang: 'en'|'bn' =
     if (createPostModalTitle && category) {
         createPostModalTitle.textContent = currentLang === 'en' ? `New Post in ${category.en}` : `${category.bn} বিভাগে নতুন পোস্ট`;
     }
-    if (dynamicFormContent) dynamicFormContent.innerHTML = generatePostForm(categoryId, currentLang);
+    if (dynamicFormContent) {
+        dynamicFormContent.innerHTML = generatePostForm(categoryId, currentLang);
+    }
     createPostForm.dataset.category = categoryId;
     categorySelectModal?.classList.remove('show');
     createPostModal?.classList.add('show');

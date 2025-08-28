@@ -49,20 +49,26 @@
     </div>
   </header>
   
-  <div class="main-nav-container">
-      <div class="container">
-          <nav class="main-nav">
-              <button id="view-feed-btn" class="main-nav-btn active">
-                  <i class="material-icons">feed</i>
-                  <span data-lang-en="News Feed" data-lang-bn="নিউজ ফিড">News Feed</span>
-              </button>
-              <button id="view-browse-btn" class="main-nav-btn">
-                  <i class="material-icons">grid_view</i>
-                  <span data-lang-en="Browse Categories" data-lang-bn="ক্যাটাগরি ব্রাউজ">Browse Categories</span>
-              </button>
-          </nav>
-      </div>
+  <div class="sticky-container">
+    <div id="emergency-bar" class="emergency-bar">
+      <!-- Emergency contacts will be injected here -->
+    </div>
+    <div class="main-nav-container">
+        <div class="container">
+            <nav class="main-nav">
+                <button id="view-feed-btn" class="main-nav-btn active">
+                    <i class="material-icons">feed</i>
+                    <span data-lang-en="News Feed" data-lang-bn="নিউজ ফিড">News Feed</span>
+                </button>
+                <button id="view-browse-btn" class="main-nav-btn">
+                    <i class="material-icons">grid_view</i>
+                    <span data-lang-en="Browse Categories" data-lang-bn="ক্যাটাগরি ব্রাউজ">Browse Categories</span>
+                </button>
+            </nav>
+        </div>
+    </div>
   </div>
+
 
   <main class="container">
     <div id="view-feed" class="view-container active">
@@ -121,6 +127,9 @@
 
   </main>
   
+  <button id="chat-fab" class="fab fab-left" aria-label="Open AI Assistant" data-lang-en-title="AI Assistant" data-lang-bn-title="এআই অ্যাসিস্ট্যান্ট">
+      <i class="material-icons">smart_toy</i>
+  </button>
   <button id="create-post-fab" class="fab" style="display: none;" aria-label="Create new post" data-lang-en-title="Create Post" data-lang-bn-title="পোস্ট তৈরি করুন">
       <i class="material-icons">add</i>
   </button>
@@ -201,6 +210,27 @@
             <!-- Post details will be injected here -->
         </div>
     </div>
+  </div>
+
+  <!-- AI Chat Modal -->
+  <div id="chat-modal" class="modal-overlay">
+      <div class="modal-content modal-chat">
+          <div class="chat-header">
+              <h2 data-lang-en="AI Assistant" data-lang-bn="এআই অ্যাসিস্ট্যান্ট">AI Assistant</h2>
+              <button id="close-chat-modal" class="close-btn" aria-label="Close chat">&times;</button>
+          </div>
+          <div id="chat-window" class="chat-window">
+              <!-- Chat messages will be injected here -->
+          </div>
+          <div class="chat-input-area">
+              <form id="chat-form">
+                  <input type="text" id="chat-input" placeholder="Ask me anything..." required autocomplete="off">
+                  <button type="submit" id="chat-send-btn" class="icon-btn" aria-label="Send message">
+                      <i class="material-icons">send</i>
+                  </button>
+              </form>
+          </div>
+      </div>
   </div>
 
 
